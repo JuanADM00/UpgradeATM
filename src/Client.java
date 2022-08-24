@@ -34,8 +34,10 @@ public class Client {
                 ClientThread hilo = new ClientThread(in, out);
                 hilo.start();
                 hilo.join();
+                if (hilo.isInterrupted()) {
+                    sn.close();
+                }
             }
-            sn.close();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {

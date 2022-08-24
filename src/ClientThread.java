@@ -74,8 +74,9 @@ public class ClientThread extends Thread {
                         System.out.println(mensaje);
                         break;
                     case 0:
-                        salir = true;
+                        this.interrupt();
                         sn.close();
+                        salir = true;
                         break;
                     default:
                         mensaje = in.readUTF();

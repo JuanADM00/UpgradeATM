@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 public class ServerThread extends Thread {
 
-    protected static ConexionDB instancia;
     private Socket sc;
     private DataInputStream in;
     private DataOutputStream out;
@@ -25,7 +24,7 @@ public class ServerThread extends Thread {
 
         int opcion, monto;
         String contraseña;
-        instancia = ConexionDB.getInstance();
+        ConexionDB instancia = Server.getInstancia();
         boolean salir = false;
         while (!salir) {
 
@@ -79,12 +78,13 @@ public class ServerThread extends Thread {
                         if (monto > -1
                                 && instancia.transaction(instancia.getCuenta().getAccountNumber(), contraseña, receiver,
                                         monto)) {
-                            out.writeUTF("Transferencia exitoso");
+                            out.writeUTF("Transferencia exitosa");
                         } else {
                             out.writeUTF("Fallo en la transacción. Intentar nuevamente.");
                         }
                         break;
                     case 0:
+                        this.interrupt();
                         salir = true;
                         break;
                     default:

@@ -13,9 +13,8 @@ public class ConexionDB {
     protected ResultSet resultSet;
     protected static final String driver = "com.mysql.cj.jdbc.Driver", user = "root", password = "Jpad18UPB*", url = "jdbc:mysql://localhost:3306/BANCOAMAYA";
     protected Account cuenta;
-    private static ConexionDB instancia;
     
-    private ConexionDB() {
+    public ConexionDB() {
         conn = null;
         try {
             cuenta = new Account("", "");
@@ -24,7 +23,6 @@ public class ConexionDB {
             if (conn != null) {
                 System.out.println("CONEXION ESTABLECIDA");
             }
-            conn.setAutoCommit(false);
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -46,24 +44,6 @@ public class ConexionDB {
         return cuenta;
     }
 
-    private void commit() {
-
-        try {
-            conn.commit();
-        } catch (SQLException ex) {
-            Logger.getLogger(ConexionDB.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /*public void rollback() {
-
-        try {
-            conn.rollback();
-        } catch (SQLException ex) {
-            Logger.getLogger(ConexionDB.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
-
     private void cerrarResult() {
         try {
             resultSet.close();
@@ -82,7 +62,6 @@ public class ConexionDB {
 
     public void cerrarConexion() {
         try {
-            commit();
             if (resultSet != null) {
                 cerrarResult();
             }
@@ -160,7 +139,6 @@ public class ConexionDB {
                 String query = "UPDATE ACCOUNTS SET SALDO = " + String.valueOf(res) + " WHERE NUMBER = '" + account + "';";
                 PreparedStatement s = this.getConn().prepareStatement(query);
                 s.executeUpdate();
-                commit();
                 return true;
             } catch (Exception e) {
                 return false;
@@ -171,7 +149,6 @@ public class ConexionDB {
 
     public boolean transaction(String account, String password, String receiver, int value) {
         if (check(password) == true && existeValor(receiver, "NUMBER", "ACCOUNTS") && withdrawal(account, password, value) == true && payment(receiver, password, value) == true) {
-            commit();
             return true;
         }
         return false;
@@ -187,7 +164,6 @@ public class ConexionDB {
                     String query = "UPDATE ACCOUNTS SET SALDO = " + String.valueOf(res) + " WHERE NUMBER = '" + account + "';";
                     PreparedStatement s = this.getConn().prepareStatement(query);
                     s.executeUpdate();
-                    commit();
                     return true;
                 } catch (Exception e) {
                     return false;
@@ -223,10 +199,4 @@ public class ConexionDB {
         return false;
     }
 
-    public static ConexionDB getInstance(){
-        if(instancia == null){
-            instancia = new ConexionDB();
-        }
-        return instancia;
-    }
 }

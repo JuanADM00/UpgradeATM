@@ -10,6 +10,10 @@ public class Server {
 
     protected static ConexionDB instancia;
 
+    public static ConexionDB getInstancia() {
+        return instancia;
+    }
+
     public static void main(String[] args) {
 
         try {
@@ -27,7 +31,7 @@ public class Server {
                 // Pide el número de cuenta
                 out.writeUTF("Provee tu cuenta");
                 String accountNumber = in.readUTF();
-                instancia = ConexionDB.getInstance();
+                instancia = new ConexionDB();
                 if (instancia.login(accountNumber)) {
                     out.writeUTF("Creada la conexion con la cuenta " + accountNumber);
                     // Inicio el hilo
