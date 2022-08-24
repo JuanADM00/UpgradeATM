@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ConexionDB {
+public class ConexionDB implements IController{
     protected Connection conn;
     protected Statement sentencia;
     protected ResultSet resultSet;
@@ -116,6 +116,7 @@ public class ConexionDB {
         return true;
     }
 
+    @Override
     public int getSaldo(String account, String password) {
         if (check(password)) {
             String query = "SELECT SALDO FROM ACCOUNTS WHERE NUMBER = '" + account + "';";
@@ -132,6 +133,7 @@ public class ConexionDB {
         return -1;
     }
 
+    @Override
     public boolean payment(String account, String password, int value) {
         if (check(password)) {
             int res = value + getSaldo(account, password);
@@ -147,6 +149,7 @@ public class ConexionDB {
         return false;
     }
 
+    @Override
     public boolean transaction(String account, String password, String receiver, int value) {
         if (check(password) == true && existeValor(receiver, "NUMBER", "ACCOUNTS") && withdrawal(account, password, value) == true && payment(receiver, password, value) == true) {
             return true;
@@ -154,6 +157,7 @@ public class ConexionDB {
         return false;
     }
 
+    @Override
     public boolean withdrawal(String account, String password, int value) {
         if (check(password)) {
             int res = getSaldo(account, password) - value;
@@ -173,6 +177,7 @@ public class ConexionDB {
         return false;
     }
 
+    @Override
     public boolean login(String account) {
         if (isCountable(account) && existeValor(account, "NUMBER", "ACCOUNTS")) {
             String query = "SELECT NUMBER, PASSWORD FROM ACCOUNTS WHERE NUMBER ='" + account + "';";
